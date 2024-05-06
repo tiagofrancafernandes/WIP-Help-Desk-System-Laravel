@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Auth\CustomerAuthController;
+use App\Http\Controllers\Api\TicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,3 +17,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
+
+Route::prefix('customers')?->name('customers.')->group(function () {
+    Route::prefix('auth')?->name('auth.')->group(function () {
+        Route::post('login', [CustomerAuthController::class, 'login'])?->name('login');
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::match(['get', 'post'], '/me', [CustomerAuthController::class, 'me'])?->name('me');
+            Route::post('/logout', [CustomerAuthController::class, 'logout'])?->name('logout');
+        });
+    });
+});
+
+Route::prefix('tickets')?->name('tickets.')?->middleware('auth:sanctum')->group(function () {
+    Route::match(['get', 'post'], '/', [TicketController::class, 'index'])?->name('index');
+});
