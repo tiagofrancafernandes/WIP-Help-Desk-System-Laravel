@@ -101,6 +101,9 @@ class CustomerAuthController extends Controller
 
     public function me(Request $request): JsonResponse // WIP
     {
+        /**
+         * @var ?\Laravel\Sanctum\Contracts\HasAbilities $currentAccessToken
+         */
         $currentAccessToken = $request->user()?->currentAccessToken();
 
         if (!$currentAccessToken) {
