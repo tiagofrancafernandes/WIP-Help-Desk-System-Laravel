@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,8 +21,26 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        static::initialAdminUsers();
         $this->call([
             CustomerSeeder::class,
         ]);
+    }
+
+    public static function initialAdminUsers()
+    {
+        $adminUsers = [
+            [
+                'email' => 'admin@mail.com',
+                'name' => 'Admin',
+                'password' => Hash::make('power@123'),
+            ]
+        ];
+
+        foreach ($adminUsers as $adminUser) {
+            $user = User::updateOrCreate([
+                'email' => $adminUser['email'],
+            ], $adminUser);
+        }
     }
 }
