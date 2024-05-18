@@ -15,6 +15,10 @@ use App\Http\Controllers\Api\TicketController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::any('/', fn () => response()->json([
+    'name' => config('app.name', 'Laravel'),
+    'date' => now(),
+]))?->name('index');
 
 Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
 
