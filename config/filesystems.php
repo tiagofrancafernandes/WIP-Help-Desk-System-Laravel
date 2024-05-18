@@ -68,5 +68,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        // base_path('build') => public_path('build'),
+        base_path('build') => 'public/build',
     ],
 ];
