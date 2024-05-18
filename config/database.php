@@ -69,6 +69,7 @@ return [
             'database' => env('HESK_DB_DATABASE', 'forge'),
             'username' => env('HESK_DB_USERNAME', 'forge'),
             'password' => env('HESK_DB_PASSWORD', ''),
+            'hesk_prefix' => env('HESK_PREFIX', ''),
             'unix_socket' => env('HESK_DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

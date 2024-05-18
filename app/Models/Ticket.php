@@ -10,9 +10,21 @@ class Ticket extends Model
 {
     use HasFactory;
 
-    protected $table = 'hesk_tickets';
     protected $connection = 'hesk_mysql';
     public $timestamps = false;
+
+    /**
+     * Get the table associated with the model.
+     *
+     * @return string
+     */
+    public function getTable()
+    {
+        return implode('', [
+            config('database.connections.hesk_mysql.hesk_prefix', ''),
+            parent::getTable(),
+        ]);
+    }
 
     public function scopeByEmail(Builder $query, string $email): Builder
     {
