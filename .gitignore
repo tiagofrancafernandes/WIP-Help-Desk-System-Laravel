@@ -1,9 +1,14 @@
 /.phpunit.cache
 /node_modules
-build
-# /public/build
+/build
+/public/build/*
 /public/hot
 /public/storage
+/public/build/manifest.json
+!/public/build/assets*
+!public/build/assets*
+!/public/build/assets/*/*.css
+!/public/build/assets/*/*.js
 /storage/*.key
 /vendor
 .env
