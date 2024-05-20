@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* [x-on\:click] > *,  */
+button[x-on\:click] > * {
+    pointer-events: none;
+}
+
+.cursor_pointer{cursor: pointer;}
+.cursor_not_allowed{cursor: not-allowed;}
+.cursor_none{cursor: none;}

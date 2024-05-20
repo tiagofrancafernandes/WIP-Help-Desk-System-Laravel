@@ -5,60 +5,15 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                <form class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
+                <form
+                    class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
+                    x-data
+                >
                     <div>
-                        <button
-                            type="button"
-                            id="dropdownRadioButton"
-                            data-dropdown-toggle="dropdownRadio"
-                            class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                        >
-                            <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z"/>
-                                </svg>
-                            Last 30 days
-                            <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                            </svg>
-                        </button>
-                        <!-- Dropdown menu -->
-                        <div id="dropdownRadio" class="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="top" style="position: absolute; inset: auto auto 0px 0px; margin: 0px; transform: translate3d(522.5px, 3847.5px, 0px);">
-                            <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioButton">
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-1" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-1" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last day</label>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input checked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-2" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last 7 days</label>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-3" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-3" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last 30 days</label>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-4" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-4" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last month</label>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-5" type="radio" value="" name="filter-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-5" class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Last year</label>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                        {{--  --}}
                     </div>
                     <label for="table-search" class="sr-only">Search</label>
                     <div class="relative">
@@ -69,7 +24,8 @@
                             type="search"
                             id="table-search"
                             name="q"
-                            placeholder="Search for items"
+                            placeholder="@lang('Search for items')"
+                            value="{{ filter_var(request()?->string('q')) }}"
                             @class([
                                 'block',
                                 'p-2',
@@ -93,7 +49,31 @@
                         >
                     </div>
                 </form>
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+
+                <table
+                    class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    x-data="{
+                        invertDirection(direction) {
+                            return direction === 'desc' ? 'asc' : 'desc';
+                        },
+                        orderBy(col, direction = null) {
+                            let sp = new URLSearchParams(location.search);
+                            direction = direction || this.invertDirection(sp.get('direction'));
+                            direction = ['asc', 'desc'].includes(direction) ? direction : 'desc';
+                            sp.set('orderBy', col);
+                            sp.set('direction', direction);
+                            location.search = sp;
+                        },
+                        getArrowText(col) {
+                            let sp = new URLSearchParams(location.search);
+                            if (sp.get('orderBy') !== col) {
+                                return null;
+                            }
+
+                            return sp.get('direction') === 'asc' ? `&#8593` : `&#8595`;
+                        },
+                    }"
+                >
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="p-4">
@@ -104,29 +84,73 @@
                                     --}}
                                 </div>
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 cursor_pointer flex items-center" x-on:click.capture="orderBy('id')">
+                                <span x-text="getArrowText('id')"></span>
                                 {{ __('ID') }}
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('name')">
+                                <span x-text="getArrowText('name')"></span>
                                 {{ __('Name') }}
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('email')">
+                                <span x-text="getArrowText('email')"></span>
                                 {{ __('E-mail') }}
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('can_open_tickets')">
+                                <span x-text="getArrowText('can_open_tickets')"></span>
                                 {{ __('Can open tickets') }}
                             </th>
-                            <th scope="col" class="px-6 py-3">
+                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('tickets_count')">
+                                <span x-text="getArrowText('tickets_count')"></span>
                                 {{ __('Total of tickets') }}
+                            </th>
+                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('updated_at')">
+                                <span x-text="getArrowText('updated_at')"></span>
+                                {{ __('Last update') }}
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 {{ __('Action') }}
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody
+                        x-data="{
+                            rowOnOut(event) {
+                                let element = event?.target;
+
+                                if (!element) {
+                                    return;
+                                }
+
+                                let tr = element.tagName?.toLowerCase() === 'tr' ? element : element.closest('.animate-pulse');
+
+                                if (!tr || !tr?.classList?.contains('animate-pulse')) {
+                                    return;
+                                }
+
+                                {{-- setTimeout(
+                                    () => tr?.classList?.remove(
+                                        'animate-pulse', 'bg-green-300', 'dark:bg-green-600', 'dark:text-green-950',
+                                        'dark:hover:text-green-500',
+                                    ),
+                                    2500
+                                ); --}}
+                            },
+                        }"
+                    >
                         @foreach ($records as $record)
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        @php
+                            $successOnThis = session()?->get('success_message_on') === sprintf('[data-record-id="%s"]', $record?->id);
+                        @endphp
+                        <tr
+                            @class([
+                                'border-b dark:border-gray-700',
+                                // 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600' => !$successOnThis,
+                                'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/75' => !$successOnThis,
+                                'animate-pulse bg-green-600/50 text-green-700 dark:text-green-500' => $successOnThis,
+                            ])
+                            x-on:mouseout.capture="rowOnOut"
+                        >
                             <td class="w-4 p-4">
                                 <div class="flex items-center">
                                     {{-- <input id="checkbox-table-search-2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
@@ -142,24 +166,61 @@
                             <td class="px-6 py-4">
                                 {{ $record?->email }}
                             </td>
-                            <td class="px-6 py-4">
-                                {{ $record?->can_open_tickets }}
+                            <td
+                                class="px-6 py-4"
+                                x-data="{
+                                    can_open_tickets: {{ $record?->can_open_tickets ? 'true' : 'false' }},
+                                }"
+                            >
+                                <form method="POST" action="{{ route('customers.update', $record?->id) }}">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="hidden">
+                                        <input
+                                            type="hidden"
+                                            name="can_open_tickets"
+                                            x-model="can_open_tickets"
+                                        >
+                                    </div>
+                                    <label
+                                        class="inline-flex items-center me-5 cursor-pointer"
+                                    >
+                                        <span class="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">@lang('No')</span>
+                                        <input
+                                            type="checkbox"
+                                            class="sr-only peer"
+                                            x-model="can_open_tickets"
+                                            {{ $record?->can_open_tickets ? 'checked' : '' }}
+                                            x-on:change="(event) => {
+                                                can_open_tickets = !can_open_tickets;
+                                                {{-- event.preventDefault(); --}}
+                                                event.target?.closest('form')?.submit();
+                                            }"
+                                        >
+                                        <div class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-0 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
+                                        <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">@lang('Yes')</span>
+                                    </label>
+                                </form>
+
                             </td>
                             <td class="px-6 py-4">
-                                -
+                                {{ $record?->tickets_count }}
                             </td>
                             <td class="px-6 py-4">
-                                {{-- <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> --}}
+                                {{ $record?->updated_at?->diffForHumans()}}
+                            </td>
+                            <td class="px-6 py-4">
                                 <div class="flex gap-4">
+                                    {{--
                                     <button
                                         type="button"
                                         @class([
-                                            'text-red-700',
+                                            'text-white',
                                             'border',
                                             'border-red-700',
                                             'bg-red-700',
                                             'hover:bg-transparent',
-                                            'hover:text-white',
+                                            'hover:text-red-700',
                                             'focus:ring-1',
                                             'focus:outline-none',
                                             'focus:ring-red-300',
@@ -172,10 +233,10 @@
                                             'items-center',
                                             'dark:border-red-500',
                                             'dark:text-white',
-                                            'dark:hover:text-red-500',
+                                            'dark:hover:text-white',
                                             'dark:focus:ring-red-800',
                                             'dark:bg-red-500',
-                                            'dark:hover:bg-transparent',
+                                            'dark:hover:bg-red-500/[.6]',
                                         ])
                                     >
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -183,16 +244,17 @@
                                         </svg>
                                         <span class="sr-only">Edit</span>
                                     </button>
+                                    --}}
 
                                     <a
                                         href="{{ route('customers.edit', $record?->id) }}"
                                         @class([
-                                            'text-blue-700',
+                                            'text-white',
                                             'border',
                                             'border-blue-700',
                                             'bg-blue-700',
                                             'hover:bg-transparent',
-                                            'hover:text-white',
+                                            'hover:text-blue-700',
                                             'focus:ring-1',
                                             'focus:outline-none',
                                             'focus:ring-blue-300',
@@ -205,10 +267,10 @@
                                             'items-center',
                                             'dark:border-blue-500',
                                             'dark:text-white',
-                                            'dark:hover:text-blue-500',
+                                            'dark:hover:text-white',
                                             'dark:focus:ring-blue-800',
                                             'dark:bg-blue-500',
-                                            'dark:hover:bg-transparent',
+                                            'dark:hover:bg-blue-500/[.6]',
                                         ])
                                     >
                                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">

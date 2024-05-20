@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -42,6 +43,16 @@ class Customer extends Model
         return [
             'uuid',
         ];
+    }
+
+    /**
+     * Get all of the tickets for the Customer
+     *
+     * @return HasMany
+     */
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class, 'email', 'email');
     }
 
     public function passwordIsValid(string $password): bool

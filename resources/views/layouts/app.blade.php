@@ -28,6 +28,8 @@
                 </header>
             @endif
 
+            @include('layouts.partials.alerts')
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}
