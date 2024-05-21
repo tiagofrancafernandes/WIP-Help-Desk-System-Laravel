@@ -17,6 +17,7 @@ class Customer extends Model
     use Notifiable;
     use HasUuids;
 
+    protected $connection = 'mysql';
     protected $fillable = [
         'uuid',
         'name',
@@ -32,6 +33,11 @@ class Customer extends Model
     protected $hidden = [
         'password',
     ];
+
+    public function getConnectionName(): ?string
+    {
+        return config('database.default');
+    }
 
     /**
      * Get the columns that should receive a unique identifier.
@@ -63,5 +69,18 @@ class Customer extends Model
     public function validateWithPassword(string $password): ?static
     {
         return Hash::check($password, $this?->password) ? $this : null;
+    }
+
+    public function customerTotalTickets(): int
+    {
+        // $this->tickets()->count(); // Good way
+
+        $email = $this->{'email'} ?? null;
+
+        if (!$email) {
+            return 0;
+        }
+
+        return Ticket::totalOfTickets($email); // Alter way
     }
 }

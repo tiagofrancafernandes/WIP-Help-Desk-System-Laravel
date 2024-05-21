@@ -23,6 +23,7 @@
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+        @if (false)
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
@@ -46,6 +47,7 @@
                 </div>
             @endif
         </div>
+        @endif
 
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>

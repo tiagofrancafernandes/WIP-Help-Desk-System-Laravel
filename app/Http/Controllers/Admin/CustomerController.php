@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rules\Password;
 
 class CustomerController extends Controller
 {
@@ -49,7 +51,56 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $passwordAsStr = trim(filter_var(
+            $request?->input('password'),
+            FILTER_DEFAULT,
+            FILTER_NULL_ON_FAILURE
+        ) ?? '') ?: str()->random(8);
+
+        $request?->merge(
+            array_filter([
+                'can_open_tickets' => filter_var(
+                    $request?->input('can_open_tickets'),
+                    FILTER_VALIDATE_BOOLEAN,
+                    FILTER_NULL_ON_FAILURE
+                ) ?? true,
+                'password' => $passwordAsStr,
+            ], fn ($item) => filled($item))
+        );
+
+        $request?->validate([
+            'name' => 'required|string|min:3',
+            'email' => 'required|email|unique:email,' . Customer::class,
+            'password' => ['required', Password::defaults(), 'confirmed'],
+            'can_open_tickets' => 'required|boolean',
+        ]);
+
+        $customer = new Customer();
+
+        $updateData = collect([
+            'name' => $request?->input('name') ?: null,
+            'email' => $request?->input('email'),
+            'password' => Hash::make($passwordAsStr),
+            'can_open_tickets' => $request?->boolean('can_open_tickets'),
+        ])?->filter(fn ($item) => filled($item));
+
+        $updateData?->each(function ($value, $key) use (&$customer) {
+            $customer->{$key} = $value;
+        });
+
+        $created = $customer->save();
+
+        $to = back() ? back() : redirect()?->route('customers.index', [
+            'orderBy' => 'updated_at',
+            'direction' => 'desc',
+        ]);
+
+        return $to->with($created ? [
+            'success' => __('Record created successfully!'),
+            'success_message_on' => sprintf('[data-record-id="%s"]', $customer?->id),
+        ] : [
+            'error' => __('Fail on store record!'),
+        ]);
     }
 
     /**
@@ -57,7 +108,16 @@ class CustomerController extends Controller
      */
     public function show(Request $request, string $id)
     {
-        //
+        $customer = Customer::where('id', $id)->first();
+
+        if (!$customer) {
+            return redirect()?->route('customers.index')
+                    ?->with([
+                        'error' => __('Not found :item', [
+                            'item' => __('customer'),
+                        ])
+                    ]);
+        }
     }
 
     /**
@@ -65,7 +125,21 @@ class CustomerController extends Controller
      */
     public function edit(Request $request, string $id)
     {
-        //
+        $customer = Customer::where('id', $id)->first();
+
+        if (!$customer) {
+            return redirect()?->route('customers.index')
+                    ?->with([
+                        'error' => __('Not found :item', [
+                            'item' => __('customer'),
+                        ])
+                    ]);
+        }
+
+        return view('customers.form', [
+            'customer' => $customer,
+            'user' => auth()->user(),
+        ]);
     }
 
     /**
@@ -85,7 +159,7 @@ class CustomerController extends Controller
 
         $request?->validate([
             'name' => 'nullable|string|min:3',
-            'password' => 'nullable|string|password',
+            'password' => ['nullable', Password::defaults(), 'confirmed'],
             'can_open_tickets' => 'nullable|boolean',
         ]);
 
@@ -102,7 +176,7 @@ class CustomerController extends Controller
 
         $updateData = collect([
             'name' => $request?->input('name') ?: null,
-            // 'email' => $request?->input('email'),
+            // 'email' => $request?->input('email'), // Cant update email (email is the customer ID)
             'password' => $request?->input('password') ? Hash::make($request?->input('password')) : null,
             'can_open_tickets' => $request?->boolean('can_open_tickets'),
         ])?->filter(fn ($item) => filled($item));
@@ -120,6 +194,7 @@ class CustomerController extends Controller
 
         return $to->with($updated ? [
             'success' => __('Record updated successfully!'),
+            'status' => 'customer-updated',
             'success_message_on' => sprintf('[data-record-id="%s"]', $customer?->id),
         ] : [
             'error' => __('Fail on update record!'),
@@ -131,6 +206,56 @@ class CustomerController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        //
+        $customer = Customer::where('id', $id)->first();
+
+        if (!$customer) {
+            return redirect()?->route('customers.index')
+                    ?->with([
+                        'error' => __('Not found :item', [
+                            'item' => __('customer'),
+                        ])
+                    ]);
+        }
+
+        $deleted = $customer->delete();
+
+        $to = back() ? back() : redirect()?->route('customers.index', [
+            'orderBy' => 'updated_at',
+            'direction' => 'desc',
+        ]);
+
+        return $to->with($deleted ? [
+            'success' => __('Record deleted successfully!'),
+            'success_message_on' => sprintf('[data-record-id="%s"]', $customer?->id),
+        ] : [
+            'error' => __('Fail on delete record!'),
+        ]);
+    }
+
+    /**
+     * Update the user's password.
+     */
+    public function updatePassword(Request $request, string $id): RedirectResponse
+    {
+        $customer = Customer::where('id', $id)->first();
+
+        if (!$customer) {
+            return redirect()?->route('customers.index')
+                    ?->with([
+                        'error' => __('Not found :item', [
+                            'item' => __('customer'),
+                        ])
+                    ]);
+        }
+
+        $validated = $request->validateWithBag('updatePassword', [
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        $customer->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
     }
 }

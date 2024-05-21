@@ -20,7 +20,7 @@ class CustomerFactory extends Factory
         return [
             // 'uuid',
             'name' => fake()?->name(),
-            'email' => str()?->random(5) . '_' . fake()?->email(),
+            'email' => str(str()?->random(5))->append('_' . fake()?->email())->lower()->toString(),
             'can_open_tickets' => fake()?->boolean(90),
             'password' => Hash::make('password'),
         ];
