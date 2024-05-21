@@ -22,7 +22,7 @@
                                 type="search"
                                 id="table-search"
                                 name="q"
-                                placeholder="@lang('Search for items')"
+                                placeholder="@lang('Search')"
                                 value="{{ filter_var(request()?->string('q')) }}"
                                 @class([
                                     'block',
@@ -83,7 +83,7 @@
                 >
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th scope="col" class="p-4">
+                            <th scope="col" class="py-2 px-3">
                                 <div class="flex items-center">
                                     {{--
                                     <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-0 dark:bg-gray-700 dark:border-gray-600">
@@ -91,32 +91,32 @@
                                     --}}
                                 </div>
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer flex items-center" x-on:click.capture="orderBy('id')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('id')">
                                 <span x-text="getArrowText('id')"></span>
                                 {{ __('ID') }}
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('name')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('name')">
                                 <span x-text="getArrowText('name')"></span>
                                 {{ __('Name') }}
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('email')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('email')">
                                 <span x-text="getArrowText('email')"></span>
                                 {{ __('E-mail') }}
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('can_open_tickets')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('can_open_tickets')">
                                 <span x-text="getArrowText('can_open_tickets')"></span>
                                 {{ __('Can open tickets') }}
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('tickets_count')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('tickets_count')">
                                 <span x-text="getArrowText('tickets_count')"></span>
                                 {{ __('Total of tickets') }}
                             </th>
-                            <th scope="col" class="px-6 py-3 cursor_pointer" x-on:click.capture="orderBy('updated_at')">
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('updated_at')">
                                 <span x-text="getArrowText('updated_at')"></span>
                                 {{ __('Last update') }}
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                {{ __('Action') }}
+                            <th scope="col" class="py-2 px-3">
+                                {{ __('Actions') }}
                             </th>
                         </tr>
                     </thead>

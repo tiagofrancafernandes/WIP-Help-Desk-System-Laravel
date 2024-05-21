@@ -31,7 +31,7 @@
                                 [
                                     'name' => 'can_open_tickets',
                                     'value' => old('can_open_tickets') ?? 1,
-                                    'label' => __('Can open tickets')
+                                    'label' => __('Create ticket')
                                 ],
                                 // [
                                 //     'name' => 'can_open_tickets',

@@ -7,6 +7,6 @@ button[x-on\:click] > * {
     pointer-events: none;
 }
 
-.cursor_pointer{cursor: pointer;}
-.cursor_not_allowed{cursor: not-allowed;}
-.cursor_none{cursor: none;}
+.cursor-pointer{cursor: pointer;}
+.cursor-not-allowed{cursor: not-allowed;}
+.cursor-none{cursor: none;}
