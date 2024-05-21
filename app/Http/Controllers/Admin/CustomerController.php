@@ -43,7 +43,7 @@ class CustomerController extends Controller
      */
     public function create(Request $request)
     {
-        return view('customers.form');
+        return view('customers.create');
     }
 
     /**
@@ -51,11 +51,19 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $passwordAsStr = trim(filter_var(
+        $request?->merge([
+            'password' => null,
+        ]);
+
+        $validatedPassword = trim(filter_var(
             $request?->input('password'),
             FILTER_DEFAULT,
             FILTER_NULL_ON_FAILURE
-        ) ?? '') ?: str()->random(8);
+        ) ?? '') ?: null;
+
+        $randomPass = str()->random(8);
+        $passwordAsStr = $validatedPassword ?: $randomPass;
+        $confirmPassword = $validatedPassword ? $request?->input('password_confirmation') : $passwordAsStr;
 
         $request?->merge(
             array_filter([
@@ -63,14 +71,15 @@ class CustomerController extends Controller
                     $request?->input('can_open_tickets'),
                     FILTER_VALIDATE_BOOLEAN,
                     FILTER_NULL_ON_FAILURE
-                ) ?? true,
+                ) ?? false,
                 'password' => $passwordAsStr,
+                'password_confirmation' => $confirmPassword,
             ], fn ($item) => filled($item))
         );
 
-        $request?->validate([
+        $validated = $request?->validate([
             'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:email,' . Customer::class,
+            'email' => 'required|email|unique:' . Customer::class . ',email',
             'password' => ['required', Password::defaults(), 'confirmed'],
             'can_open_tickets' => 'required|boolean',
         ]);
@@ -78,10 +87,10 @@ class CustomerController extends Controller
         $customer = new Customer();
 
         $updateData = collect([
-            'name' => $request?->input('name') ?: null,
-            'email' => $request?->input('email'),
+            'name' => $validated['name'] ?? null,
+            'email' => $validated['email'] ?? null,
             'password' => Hash::make($passwordAsStr),
-            'can_open_tickets' => $request?->boolean('can_open_tickets'),
+            'can_open_tickets' => $validated['can_open_tickets'] ?? false,
         ])?->filter(fn ($item) => filled($item));
 
         $updateData?->each(function ($value, $key) use (&$customer) {
@@ -90,7 +99,7 @@ class CustomerController extends Controller
 
         $created = $customer->save();
 
-        $to = back() ? back() : redirect()?->route('customers.index', [
+        $to = redirect()?->route('customers.index', [
             'orderBy' => 'updated_at',
             'direction' => 'desc',
         ]);
@@ -136,7 +145,7 @@ class CustomerController extends Controller
                     ]);
         }
 
-        return view('customers.form', [
+        return view('customers.edit', [
             'customer' => $customer,
             'user' => auth()->user(),
         ]);
