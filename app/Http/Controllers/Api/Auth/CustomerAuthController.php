@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Models\Customer;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class CustomerAuthController extends Controller
 {
-    public function login(Request $request): JsonResponse // WIP
+    public function login(Request $request): JsonResponse
     {
         $request?->validate([
             'email' => 'required|email',
@@ -99,7 +101,7 @@ class CustomerAuthController extends Controller
         return response()->json($responseData, 201);
     }
 
-    public function me(Request $request): JsonResponse // WIP
+    public function me(Request $request): JsonResponse
     {
         /**
          * @var ?\Laravel\Sanctum\Contracts\HasAbilities $currentAccessToken
@@ -155,7 +157,7 @@ class CustomerAuthController extends Controller
         return response()?->json($responseData, 200);
     }
 
-    public function logout(Request $request): JsonResponse // WIP
+    public function logout(Request $request): JsonResponse
     {
         /**
          * @var ?\Laravel\Sanctum\Contracts\HasAbilities $currentAccessToken
@@ -177,5 +179,47 @@ class CustomerAuthController extends Controller
             'success' => boolval($deleted),
             'message' => __($deleted ? 'Logged out' : 'Fail to logout'),
         ], 200);
+    }
+
+    /**
+     * Update the user's password.
+     */
+    public function updatePassword(Request $request): JsonResponse
+    {
+        /**
+         * @var ?\Laravel\Sanctum\Contracts\HasAbilities $currentAccessToken
+         */
+        $currentAccessToken = $request->user()?->currentAccessToken();
+
+        if (!$currentAccessToken) {
+            return response()?->json([
+                'error' => $error = __('Unauthenticated.'),
+                'errors' => [
+                    'login' => $error,
+                ]
+            ], 403);
+        }
+
+        $customer = $currentAccessToken?->tokenable ?? null;
+
+        if (!$customer) {
+            return response()?->json([
+                'success' => false,
+                'message' => __('Fail on update password'),
+            ], 403);
+        }
+
+        $validated = $request->validateWithBag('updatePassword', [
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        $updated = $customer->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return response()?->json([
+            'success' => boolval($updated),
+            'message' => $updated ? __('Password upated successfully') : __('Fail on update password'),
+        ]);
     }
 }

@@ -29,6 +29,8 @@ Route::prefix('customers')?->name('customers.')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::match(['get', 'post'], '/me', [CustomerAuthController::class, 'me'])?->name('me');
             Route::post('/logout', [CustomerAuthController::class, 'logout'])?->name('logout');
+            Route::post('/update-password', [CustomerAuthController::class, 'updatePassword'])
+                ?->name('update_password');
         });
     });
 });
