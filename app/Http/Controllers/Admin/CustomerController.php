@@ -51,10 +51,6 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $request?->merge([
-            'password' => null,
-        ]);
-
         $validatedPassword = trim(filter_var(
             $request?->input('password'),
             FILTER_DEFAULT,

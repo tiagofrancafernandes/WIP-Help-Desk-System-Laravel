@@ -174,5 +174,7 @@
     "results": "resultados",
     "Password upated successfully": "Senha atualizada com sucesso",
     "Fail on update password": "Falha ao atualizar senha",
+    "Leave blank to generate a random password.": "Deixe em branco para gerar uma senha aleatória.",
+    "Generate a random password": "Gerar uma senha aleatória",
     "to": "até"
 }
