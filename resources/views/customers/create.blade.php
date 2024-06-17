@@ -82,7 +82,7 @@ $generateRandomPass = !true;
                 </div>
 
                 <div class="w-full">
-                    <div class="border border-gray-700/50 dark:border-gray-700 pt-3 px-2 rounded-lg">
+                    <div class="border border-gray-700/50 dark:border-gray-700 pt-2 px-2 rounded-lg">
                         <div class="mb-3">
                             <label class="inline-flex items-center cursor-pointer">
                                 <input
