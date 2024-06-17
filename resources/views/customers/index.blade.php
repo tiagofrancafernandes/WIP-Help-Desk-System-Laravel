@@ -60,7 +60,7 @@
                 <table
                     class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
                     x-data="{
-                        invertDirection(direction) {
+                        invertDir'  'ection(direction) {
                             return direction === 'desc' ? 'asc' : 'desc';
                         },
                         orderBy(col, direction = null) {
@@ -98,6 +98,10 @@
                             <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('name')">
                                 <span x-text="getArrowText('name')"></span>
                                 {{ __('Name') }}
+                            </th>
+                            <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('contract_id')">
+                                <span x-text="getArrowText('contract_id')"></span>
+                                {{ __('Contract') }}
                             </th>
                             <th scope="col" class="py-2 px-3 cursor-pointer" x-on:click.capture="orderBy('email')">
                                 <span x-text="getArrowText('email')"></span>
@@ -169,6 +173,9 @@
                             </th>
                             <td class="px-6 py-4">
                                 {{ $record?->name }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $record?->contract?->name }}
                             </td>
                             <td class="px-6 py-4">
                                 {{ $record?->email }}

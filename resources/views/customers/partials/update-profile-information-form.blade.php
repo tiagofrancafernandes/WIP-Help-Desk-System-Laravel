@@ -18,6 +18,24 @@
         @method('patch')
 
         <div>
+            <label for="contract_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Contract')</label>
+
+            <select id="contract_id" name="contract_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="">@lang('Choose a contract')</option>
+                <option
+                    value=""
+                    @selected(!$customer?->contract_id)
+                >@lang('Empty') - (@lang('No contract'))</option>
+                @foreach ($contracts as $contract)
+                    <option
+                        value="{{ $contract?->id }}"
+                        @selected($customer?->contract_id == $contract?->id)
+                    >{{ $contract?->label }} @selected($customer?->contract_id == $contract?->id)</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $customer->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />

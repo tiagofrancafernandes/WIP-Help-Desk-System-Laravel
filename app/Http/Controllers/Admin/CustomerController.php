@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Contract;
+use Illuminate\Support\Fluent;
 
 class CustomerController extends Controller
 {
@@ -33,6 +35,12 @@ class CustomerController extends Controller
                 in_array($direction, ['asc', 'desc']) ? $direction : 'asc'
             )
                     ?->withCount('tickets')
+                    ?->with([
+                        'contract' => fn ($query) => $query->select([
+                            'id',
+                            'name',
+                        ])
+                    ])
                     ?->when($search, fn ($query) => $query->whereRaw('LOWER(name) like ?', '%' . $search . '%'))
                     ?->paginate(20)?->withQueryString(),
         ]);
@@ -43,7 +51,20 @@ class CustomerController extends Controller
      */
     public function create(Request $request)
     {
-        return view('customers.create');
+        $contracts = cache()->remember(
+            'contract_select_ids',
+            5 * 60,
+            fn () => Contract::select('id', 'name', 'document_value')
+                ->get()
+                    ?->map(fn ($item) => new Fluent([
+                        'id' => $item->id,
+                        'label' => sprintf('%s (%s)', $item->name, $item->document_value)
+                    ])),
+        );
+
+        return view('customers.create', [
+            'contracts' => $contracts,
+        ]);
     }
 
     /**
@@ -51,11 +72,13 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedPassword = trim(filter_var(
-            $request?->input('password'),
-            FILTER_DEFAULT,
-            FILTER_NULL_ON_FAILURE
-        ) ?? '') ?: null;
+        $validatedPassword = trim(
+            filter_var(
+                $request?->input('password'),
+                FILTER_DEFAULT,
+                FILTER_NULL_ON_FAILURE
+            ) ?? ''
+        ) ?: null;
 
         $randomPass = str()->random(8);
         $passwordAsStr = $validatedPassword ?: $randomPass;
@@ -76,20 +99,22 @@ class CustomerController extends Controller
         $validated = $request?->validate([
             'name' => 'required|string|min:3',
             'email' => 'required|email|unique:' . Customer::class . ',email',
+            'contract_id' => 'nullable|integer|exists:' . Contract::class . ',id',
             'password' => ['required', Password::defaults(), 'confirmed'],
             'can_open_tickets' => 'required|boolean',
         ]);
 
         $customer = new Customer();
 
-        $updateData = collect([
+        $storeData = collect([
             'name' => $validated['name'] ?? null,
             'email' => $validated['email'] ?? null,
+            'contract_id' => $validated['contract_id'] ?? null,
             'password' => Hash::make($passwordAsStr),
             'can_open_tickets' => $validated['can_open_tickets'] ?? false,
         ])?->filter(fn ($item) => filled($item));
 
-        $updateData?->each(function ($value, $key) use (&$customer) {
+        $storeData?->each(function ($value, $key) use (&$customer) {
             $customer->{$key} = $value;
         });
 
@@ -130,7 +155,14 @@ class CustomerController extends Controller
      */
     public function edit(Request $request, string $id)
     {
-        $customer = Customer::where('id', $id)->first();
+        $customer = Customer::where('id', $id)
+                ?->with([
+                    'contract' => fn ($query) => $query->select([
+                        'id',
+                        'name',
+                    ])
+                ])
+            ->first();
 
         if (!$customer) {
             return redirect()?->route('customers.index')
@@ -141,9 +173,21 @@ class CustomerController extends Controller
                     ]);
         }
 
+        $contracts = cache()->remember(
+            'contract_select_ids',
+            5 * 60,
+            fn () => Contract::select('id', 'name', 'document_value')
+                ->get()
+                    ?->map(fn ($item) => new Fluent([
+                        'id' => $item->id,
+                        'label' => sprintf('%s (%s)', $item->name, $item->document_value)
+                    ])),
+        );
+
         return view('customers.edit', [
             'customer' => $customer,
             'user' => auth()->user(),
+            'contracts' => $contracts,
         ]);
     }
 
@@ -164,6 +208,7 @@ class CustomerController extends Controller
 
         $request?->validate([
             'name' => 'nullable|string|min:3',
+            'contract_id' => 'nullable|integer|exists:' . Contract::class . ',id',
             'password' => ['nullable', Password::defaults(), 'confirmed'],
             'can_open_tickets' => 'nullable|boolean',
         ]);
@@ -184,7 +229,8 @@ class CustomerController extends Controller
             // 'email' => $request?->input('email'), // Cant update email (email is the customer ID)
             'password' => $request?->input('password') ? Hash::make($request?->input('password')) : null,
             'can_open_tickets' => $request?->boolean('can_open_tickets'),
-        ])?->filter(fn ($item) => filled($item));
+        ])?->filter(fn ($item) => filled($item))
+        ?->put('contract_id', $request?->input('contract_id') ?: null);
 
         $updateData?->each(function ($value, $key) use (&$customer) {
             $customer->{$key} = $value;

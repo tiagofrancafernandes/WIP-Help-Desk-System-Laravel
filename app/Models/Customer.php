@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Customer extends Model
 {
@@ -82,5 +83,15 @@ class Customer extends Model
         }
 
         return Ticket::totalOfTickets($email); // Alter way
+    }
+
+    /**
+     * Get the contract that owns the Customer
+     *
+     * @return BelongsTo
+     */
+    public function contract(): BelongsTo
+    {
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
 }
