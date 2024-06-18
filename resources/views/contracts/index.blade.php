@@ -60,7 +60,7 @@
                 <table
                     class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
                     x-data="{
-                        invertDir'  'ection(direction) {
+                        invertDirection(direction) {
                             return direction === 'desc' ? 'asc' : 'desc';
                         },
                         orderBy(col, direction = null) {
@@ -77,7 +77,7 @@
                                 return null;
                             }
 
-                            return sp.get('direction') === 'asc' ? `&#8593` : `&#8595`;
+                            return sp.get('direction') === 'asc' ? `&#8593;` : `&#8595;`;
                         },
                     }"
                 >

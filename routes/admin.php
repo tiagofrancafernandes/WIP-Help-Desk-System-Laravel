@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\CustomerUserController;
 use App\Http\Controllers\Admin\ContractController;
 
-Route::resource('customers', CustomerController::class);
-Route::put('customers/{customer}/update-password', [CustomerController::class, 'updatePassword'])->name('customers.update_password');
+Route::prefix('customers')->name('customers.')->group(function () {
+    Route::resource('users', CustomerUserController::class);
+    Route::put('users/{user}/update-password', [CustomerUserController::class, 'updatePassword'])->name('user.update_password');
+});
+
 Route::resource('contracts', ContractController::class);
 
 Route::get('/', fn () => redirect('dashboard'));

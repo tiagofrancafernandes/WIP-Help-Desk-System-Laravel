@@ -5,7 +5,7 @@ $generateRandomPass = !true;
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Create Customer') }}
+            {{ __('New customer user') }}
         </h2>
     </x-slot>
 
@@ -22,7 +22,7 @@ $generateRandomPass = !true;
         }"
     >
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <form method="post" action="{{ route('customers.store') }}" class="mt-6 space-y-6">
+            <form method="post" action="{{ route('customers.users.store') }}" class="mt-6 space-y-6">
                 @csrf
 
                 <div class="grid gap-6 mb-6 md:grid-cols-3">

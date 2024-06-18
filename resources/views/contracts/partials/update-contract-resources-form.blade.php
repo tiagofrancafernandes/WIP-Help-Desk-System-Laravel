@@ -9,7 +9,7 @@
         </p>
     </header>
 
-    <form method="POST" action="{{ route('customers.update', $contract?->id) }}" class="p-4 __mt-6 __space-y-6">
+    <form method="POST" action="{{ route('customers.users.update', $contract?->id) }}" class="p-4 __mt-6 __space-y-6">
         @csrf
         @method('patch')
 

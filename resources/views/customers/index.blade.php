@@ -1,19 +1,219 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Customers') }}
+            {{ __('Customer users') }}
         </h2>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="mb-6 w-full rounded-lg">
+                <div class="flex flex-col">
+                    <div class="rounded-xl border-0 border-gray-200 bg-gray-100 dark:bg-gray-800 p-3 shadow-md">
+                        <form
+                            x-data="{
+                                showAdvancedForm: false,
+                                canOpenTicketsOnly: @js(request()->input('can_open_tickets_only')),
+                                contractId: @js(request()->input('contract_id')),
+                                dateFrom: @js(request()->input('date.from')),
+                                dateTo: @js(request()->input('date.to')),
+                                submitForm() {
+                                    if (!this.$refs?.filterForm) {
+                                        return;
+                                    }
+
+                                    this.$refs?.filterForm?.submit();
+                                },
+                                resetSearch() {
+                                    if (!this.$refs?.filterForm) {
+                                        return;
+                                    }
+
+                                    this.$refs?.filterForm?.reset();
+                                    {{-- this.$refs?.filterForm?.submit(); --}}
+                                    location.href = location.origin + location.pathname;
+                                },
+                                init() {
+                                    this.showAdvancedForm = @js($showAdvancedSearch);
+                                },
+                            }"
+                            x-ref="filterForm"
+                            x-on:keyup.enter="submitForm"
+                        >
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                                <div class="flex flex-col">
+                                    <label for="search" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Free search')</label>
+                                    <div class="relative w-full flex items-center justify-between rounded-md">
+                                        <svg class="absolute left-2 block h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="11" cy="11" r="8" class=""></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65" class=""></line>
+                                        </svg>
+                                        <input
+                                            type="search"
+                                            name="search"
+                                            value="{{ request('search') }}"
+                                            @class([
+                                                'h-10',
+                                                'w-full',
+                                                'cursor-text',
+                                                'block',
+                                                'p-2',
+                                                'ps-10',
+                                                'text-sm',
+                                                'text-gray-900',
+                                                'border',
+                                                'border-gray-300',
+                                                'rounded-lg',
+                                                // 'w-80',
+                                                'bg-gray-50',
+                                                'focus:ring-blue-500',
+                                                'focus:border-blue-500',
+                                                'dark:bg-gray-700',
+                                                'dark:border-gray-600',
+                                                'dark:placeholder-gray-400',
+                                                'dark:text-white',
+                                                'dark:focus:ring-blue-500',
+                                                'dark:focus:border-blue-500',
+                                            ])
+
+                                            placeholder="{{ __('Search by :item', ['item' => __('name'). ', email, etc']) }}"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <label for="name" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Name')</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value="{{ request('name') }}"
+                                        x-on:change="submitForm"
+                                        x-on:keyup.enter="submitForm"
+                                        placeholder="{{ __('Search by :item', ['item' => __('name')]) }}"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                </div>
+
+                                <div class="flex flex-col justify-center pt-5">
+                                    <button
+                                        type="button"
+                                        x-on:click="showAdvancedForm = !showAdvancedForm"
+                                        class="rounded-lg bg-gray-200 px-8 py-2 font-medium text-gray-700 outline-none hover:opacity-80 focus:ring"
+                                    >@lang('Show/hide advanced search')</button>
+                                </div>
+                            </div>
+
+                            <div
+                                x-cloak
+                                x-show="showAdvancedForm"
+                                class="my-6 md:my-3 grid grid-cols-1 gap-6 md:grid-cols-4"
+                            >
+                                <div class="flex flex-col">
+                                    <label for="can_open_tickets_only" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Can open tickets')</label>
+
+                                    <select
+                                        x-on:change="submitForm"
+                                        x-model="canOpenTicketsOnly"
+                                        id="can_open_tickets_only"
+                                        name="can_open_tickets_only" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option
+                                            value=""
+                                            @selected(!request('can_open_tickets_only'))
+                                        >@lang('All')</option>
+                                        <option
+                                            value="true"
+                                            @selected(in_array(request('can_open_tickets_only'), ['true', true, 1]))
+                                        >@lang('Can open tickets only')</option>
+                                        <option
+                                            value="false"
+                                            @selected(in_array(request('can_open_tickets_only'), ['false', false, '0'], true))
+                                        >@lang('Can not open tickets only')</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <label for="contract_id" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Contract')</label>
+
+                                    <select
+                                        x-model="contractId"
+                                        x-on:change="submitForm"
+                                        id="contract_id"
+                                        name="contract_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <option value="">@lang('Choose a contract')</option>
+                                        <option
+                                            value="all"
+                                            @selected(request('contract_id') == 'all')
+                                        >@lang('All')</option>
+                                        <option
+                                            value="empty_only"
+                                            @selected(request('contract_id') == 'empty_only')
+                                        >@lang('Empty') - (@lang('No contract'))</option>
+                                        @foreach ($contracts as $contract)
+                                            <option
+                                                value="{{ $contract?->id }}"
+                                            >{{ $contract?->label }} @selected(request('contract_id') == $contract?->id)</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-span-1 md:col-span-2">
+                                    <div class="grid grid-cols-2 gap-4 md:gap-6">
+                                        <div class="flex flex-col">
+                                            <label for="date_from" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Updated from')</label>
+                                            <input
+                                                x-model="dateFrom"
+                                                type="date"
+                                                id="date_from"
+                                                name="date[from]"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        </div>
+
+                                        <div class="flex flex-col">
+                                            <label for="date_to" class="block text-sm font-medium text-gray-900 dark:text-white">@lang('Updated until')</label>
+                                            <input
+                                                x-model="dateTo"
+                                                type="date"
+                                                id="date_to"
+                                                name="date[to]"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 grid w-full grid-cols-2 justify-end space-x-4 md:flex">
+                                <button
+                                    type="button"
+                                    x-on:click.prevent.capture.stop="resetSearch"
+                                    class="rounded-lg bg-gray-200 px-8 py-2 font-medium text-gray-700 outline-none hover:opacity-80 focus:ring"
+                                >@lang('Reset')</button>
+                                <button
+                                    type="button"
+                                    x-on:click.prevent.capture.stop="submitForm"
+                                    class="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white outline-none hover:opacity-80 focus:ring"
+                                >@lang('Search')</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg p-3 bg-gray-800">
                 <form
                     class="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
-                    x-data
+                    x-data="{
+                        submitForm() {
+                            if (!this.$refs?.filterForm) {
+                                return;
+                            }
+
+                            this.$refs?.filterForm?.submit();
+                        }
+                    }"
+                    x-ref="filterForm"
                 >
                     <div>
-                        <label for="table-search" class="sr-only">Search</label>
+                        {{-- <label for="table-search" class="sr-only">Search</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
                                 <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
@@ -45,12 +245,15 @@
                                     'dark:focus:border-blue-500',
                                 ])
                             >
-                        </div>
+                        </div> --}}
+                    </div>
+
+                    <div class="flex items-center gap-2 me-4">
                     </div>
 
                     <div>
                         <div class="flex items-center gap-4">
-                            <a href="{{ route('customers.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-0 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                            <a href="{{ route('customers.users.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-0 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                 @lang('Add new')
                             </a>
                         </div>
@@ -60,8 +263,8 @@
                 <table
                     class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
                     x-data="{
-                        invertDir'  'ection(direction) {
-                            return direction === 'desc' ? 'asc' : 'desc';
+                        invertDirection(direction) {
+                            return (direction === 'desc') ? 'asc' : 'desc';
                         },
                         orderBy(col, direction = null) {
                             let sp = new URLSearchParams(location.search);
@@ -77,7 +280,7 @@
                                 return null;
                             }
 
-                            return sp.get('direction') === 'asc' ? `&#8593` : `&#8595`;
+                            return (sp.get('direction') === 'asc') ? `&#8593;` : `&#8595;`;
                         },
                     }"
                 >
@@ -186,7 +389,7 @@
                                     can_open_tickets: {{ $record?->can_open_tickets ? 'true' : 'false' }},
                                 }"
                             >
-                                <form method="POST" action="{{ route('customers.update', $record?->id) }}">
+                                <form method="POST" action="{{ route('customers.users.update', $record?->id) }}">
                                     @csrf
                                     @method('PUT')
                                     <div class="hidden">
@@ -261,7 +464,7 @@
                                     --}}
 
                                     <a
-                                        href="{{ route('customers.edit', $record?->id) }}"
+                                        href="{{ route('customers.users.edit', $record?->id) }}"
                                         @class([
                                             'text-white',
                                             'border',
@@ -299,6 +502,7 @@
                     </tbody>
                 </table>
             </div>
+
             @if ($records->hasPages())
                 <div class="mt-4">
                     {{ $records->links('pagination::tailwind') }}

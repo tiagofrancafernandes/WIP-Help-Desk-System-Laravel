@@ -10,39 +10,76 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Contract;
 
-class CustomerController extends Controller
+class CustomerUserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $search = filter_var($request?->input('q'));
+        if ($request->input('contract_id') === 'all') {
+            $request->merge(['contract_id' => null]);
+        }
+
+        $validator = validator($request->all(), [
+            'can_open_tickets_only' => 'nullable|in:' . implode(',', ['1', '0', 'true', 'false']),
+            'contract_id' => 'nullable|integer',
+            'name' => 'nullable|string',
+            'date.from' => 'nullable|date',
+            'date.to' => 'nullable|date|after:date.from',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('customers.users.index')->withErrors($validator->getMessageBag());
+        }
+
+        $searchByName = filter_var($request?->input('name'));
+        $search = filter_var($request?->input('q', $request?->input('search')));
         $orderBy = filter_var($request?->input('orderBy'));
         $direction = filter_var($request?->input('direction'));
 
-        return view('customers.index', [
-            'records' => Customer::orderBy(
-                in_array($orderBy, [
-                    'id',
-                    'name',
-                    'email',
-                    'can_open_tickets',
-                    'tickets_count',
-                    'contract_id',
-                    'updated_at',
-                ]) ? $orderBy : 'id',
-                in_array($direction, ['asc', 'desc']) ? $direction : 'asc'
-            )
-                    ?->withCount('tickets')
-                    ?->with([
-                        'contract' => fn ($query) => $query->select([
-                            'id',
-                            'name',
-                        ])
+        $canOpenTicketsOnly = $request->input('can_open_tickets_only');
+        $contractId = $request->input('contract_id');
+        $dateFrom = $request->input('date.from');
+        $dateTo = $request->input('date.to');
+
+        $query = Customer::orderBy(
+            in_array($orderBy, [
+                'id',
+                'name',
+                'email',
+                'can_open_tickets',
+                'tickets_count',
+                'contract_id',
+                'updated_at',
+            ]) ? $orderBy : 'id',
+            in_array($direction, ['asc', 'desc']) ? $direction : 'asc'
+        )
+                ?->withCount('tickets')
+                ?->with([
+                    'contract' => fn ($query) => $query->select([
+                        'id',
+                        'name',
                     ])
-                    ?->when($search, fn ($query) => $query->whereRaw('LOWER(name) like ?', '%' . $search . '%'))
-                    ?->paginate(20)?->withQueryString(),
+                ])
+                ?->when($search, fn ($query) => $query->whereRaw('LOWER(name) like ?', '%' . $search . '%'))
+                ?->when($searchByName, fn ($query) => $query->whereRaw('LOWER(name) like ?', '%' . $searchByName . '%'))
+                ?->when($dateFrom, fn ($query) => $query->where('updated_at', '>=', $dateFrom))
+                ?->when($dateTo, fn ($query) => $query->where('updated_at', '<=', $dateTo))
+                ?->when(
+                    !is_null($canOpenTicketsOnly),
+                    function ($query) use ($canOpenTicketsOnly) {
+                        $value = filter_var($canOpenTicketsOnly, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+                        return $query->where('can_open_tickets', $value);
+                    },
+                )
+                ?->when($contractId, fn ($query) => $query->where('contract_id', $contractId));
+
+        return view('customers.index', [
+            'contracts' => Contract::selectIds(),
+            'showAdvancedSearch' => $canOpenTicketsOnly || $contractId || $dateFrom || $dateTo,
+            'records' => $query?->paginate(20)?->withQueryString(),
         ]);
     }
 
@@ -109,7 +146,7 @@ class CustomerController extends Controller
 
         $created = $customer->save();
 
-        $to = redirect()?->route('customers.index', [
+        $to = redirect()?->route('customers.users.index', [
             'orderBy' => 'updated_at',
             'direction' => 'desc',
         ]);
@@ -130,7 +167,7 @@ class CustomerController extends Controller
         $customer = Customer::where('id', $id)->first();
 
         if (!$customer) {
-            return redirect()?->route('customers.index')
+            return redirect()?->route('customers.users.index')
                     ?->with([
                         'error' => __('Not found :item', [
                             'item' => __('customer'),
@@ -154,7 +191,7 @@ class CustomerController extends Controller
             ->first();
 
         if (!$customer) {
-            return redirect()?->route('customers.index')
+            return redirect()?->route('customers.users.index')
                     ?->with([
                         'error' => __('Not found :item', [
                             'item' => __('customer'),
@@ -194,7 +231,7 @@ class CustomerController extends Controller
         $customer = Customer::where('id', $id)->first();
 
         if (!$customer) {
-            return redirect()?->route('customers.index')
+            return redirect()?->route('customers.users.index')
                     ?->with([
                         'error' => __('Not found :item', [
                             'item' => __('customer'),
@@ -208,7 +245,7 @@ class CustomerController extends Controller
             'password' => $request?->input('password') ? Hash::make($request?->input('password')) : null,
             'can_open_tickets' => $request?->boolean('can_open_tickets'),
         ])?->filter(fn ($item) => filled($item))
-        ?->put('contract_id', $request?->input('contract_id') ?: null);
+                ?->put('contract_id', $request?->input('contract_id') ?: null);
 
         $updateData?->each(function ($value, $key) use (&$customer) {
             $customer->{$key} = $value;
@@ -216,7 +253,7 @@ class CustomerController extends Controller
 
         $updated = $customer->save();
 
-        $to = back() ? back() : redirect()?->route('customers.index', [
+        $to = back() ? back() : redirect()?->route('customers.users.index', [
             'orderBy' => 'updated_at',
             'direction' => 'desc',
         ]);
@@ -238,7 +275,7 @@ class CustomerController extends Controller
         $customer = Customer::where('id', $id)->first();
 
         if (!$customer) {
-            return redirect()?->route('customers.index')
+            return redirect()?->route('customers.users.index')
                     ?->with([
                         'error' => __('Not found :item', [
                             'item' => __('customer'),
@@ -248,7 +285,7 @@ class CustomerController extends Controller
 
         $deleted = $customer->delete();
 
-        $to = back() ? back() : redirect()?->route('customers.index', [
+        $to = back() ? back() : redirect()?->route('customers.users.index', [
             'orderBy' => 'updated_at',
             'direction' => 'desc',
         ]);
@@ -269,7 +306,7 @@ class CustomerController extends Controller
         $customer = Customer::where('id', $id)->first();
 
         if (!$customer) {
-            return redirect()?->route('customers.index')
+            return redirect()?->route('customers.users.index')
                     ?->with([
                         'error' => __('Not found :item', [
                             'item' => __('customer'),
