@@ -35,7 +35,7 @@
             @include('layouts.partials.alerts')
 
             <!-- Page Content -->
-            <main>
+            <main class="px-2 md:px-0">
                 {{ $slot }}
             </main>
         </div>

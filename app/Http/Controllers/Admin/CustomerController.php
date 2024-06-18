@@ -30,6 +30,7 @@ class CustomerController extends Controller
                     'email',
                     'can_open_tickets',
                     'tickets_count',
+                    'contract_id',
                     'updated_at',
                 ]) ? $orderBy : 'id',
                 in_array($direction, ['asc', 'desc']) ? $direction : 'asc'

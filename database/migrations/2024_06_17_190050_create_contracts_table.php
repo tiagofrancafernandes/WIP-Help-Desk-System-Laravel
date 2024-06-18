@@ -15,8 +15,8 @@ return new class() extends Migration {
             $table->uuid('uuid')->unique()->index();
             $table->string('name');
             $table->string('email')->nullable()->unique()->index();
-            $table->integer('document_type')->index();
-            $table->string('document_value')->index();
+            $table->integer('document_type')->nullable()->index();
+            $table->string('document_value')->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
         });

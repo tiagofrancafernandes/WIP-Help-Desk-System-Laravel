@@ -25,6 +25,7 @@ class Customer extends Model
         'email',
         'password',
         'can_open_tickets',
+        'contract_id',
     ];
 
     protected $casts = [

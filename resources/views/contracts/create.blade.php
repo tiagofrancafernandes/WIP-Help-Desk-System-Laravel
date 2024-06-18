@@ -5,7 +5,7 @@ $generateRandomPass = !true;
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Create Customer') }}
+            {{ __('New contract') }}
         </h2>
     </x-slot>
 
@@ -22,21 +22,10 @@ $generateRandomPass = !true;
         }"
     >
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <form method="post" action="{{ route('customers.store') }}" class="mt-6 space-y-6">
+            <form method="post" action="{{ route('contracts.store') }}" class="mt-6 space-y-6">
                 @csrf
 
                 <div class="grid gap-6 mb-6 md:grid-cols-3">
-                    <div>
-                        <label for="contract_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Contract')</label>
-                        <select id="contract_id" name="contract_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option value="" selected>@lang('Choose a contract')</option>
-                            <option value="">@lang('Empty') - (@lang('No contract'))</option>
-                            @foreach ($contracts as $contract)
-                                <option value="{{ $contract?->id }}">{{ $contract?->label }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
                     <div>
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Name')</label>
                         <input type="text" id="name" name="name" value="{{ old('name') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Name') }}" required />
@@ -48,7 +37,35 @@ $generateRandomPass = !true;
                     </div>
                 </div>
 
-                <div class="mb-6">
+                <div class="grid gap-6 mb-6 md:grid-cols-3">
+                    <div>
+                        <label for="contract_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Document type')</label>
+                        <select id="contract_id" name="document_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="" selected>@lang('Choose a option')</option>
+                            <option value="">@lang('Empty')</option>
+                            @foreach ($documentTypeOptions as $documentTyp)
+                                <option
+                                    value="{{ $documentTyp?->value }}"
+                                    @selected(old('document_value') == $documentTyp?->value)
+                                >{{ $documentTyp?->label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="document_value" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Document value')</label>
+                        <input
+                            type="text"
+                            id="document_value"
+                            name="document_value" value="{{ old('document_value') }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="{{ __('Document value') }}"
+                        />
+                    </div>
+                </div>
+
+                @if (false)
+                <div class="w-full mb-6">
                     <h4 for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">@lang('Resources')</h4>
 
                     <div class="border border-gray-700/50 dark:border-gray-700 pt-2 pb-0 px-2 rounded-lg">
@@ -91,8 +108,10 @@ $generateRandomPass = !true;
                         </div>
                     </div>
                 </div>
+                @endif
 
-                <div class="w-full">
+                @if (false)
+                <div class="w-full mb-6">
                     <div class="border border-gray-700/50 dark:border-gray-700 pt-2 px-2 rounded-lg">
                         <div class="mb-3">
                             <label class="inline-flex items-center cursor-pointer">
@@ -153,6 +172,7 @@ $generateRandomPass = !true;
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="w-full">
                     {{-- <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button> --}}
