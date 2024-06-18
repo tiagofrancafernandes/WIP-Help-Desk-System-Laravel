@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rules\Password;
 use App\Models\Contract;
-use Illuminate\Support\Fluent;
 
 class CustomerController extends Controller
 {
@@ -52,19 +51,8 @@ class CustomerController extends Controller
      */
     public function create(Request $request)
     {
-        $contracts = cache()->remember(
-            'contract_select_ids',
-            5 * 60,
-            fn () => Contract::select('id', 'name', 'document_value')
-                ->get()
-                    ?->map(fn ($item) => new Fluent([
-                        'id' => $item->id,
-                        'label' => sprintf('%s (%s)', $item->name, $item->document_value)
-                    ])),
-        );
-
         return view('customers.create', [
-            'contracts' => $contracts,
+            'contracts' => Contract::selectIds(),
         ]);
     }
 
@@ -174,21 +162,10 @@ class CustomerController extends Controller
                     ]);
         }
 
-        $contracts = cache()->remember(
-            'contract_select_ids',
-            5 * 60,
-            fn () => Contract::select('id', 'name', 'document_value')
-                ->get()
-                    ?->map(fn ($item) => new Fluent([
-                        'id' => $item->id,
-                        'label' => sprintf('%s (%s)', $item->name, $item->document_value)
-                    ])),
-        );
-
         return view('customers.edit', [
             'customer' => $customer,
             'user' => auth()->user(),
-            'contracts' => $contracts,
+            'contracts' => Contract::selectIds(),
         ]);
     }
 
