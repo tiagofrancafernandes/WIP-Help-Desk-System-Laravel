@@ -58,7 +58,7 @@ class ContractController extends Controller
     {
         $validated = $request?->validate([
             'name' => 'required|string|min:3',
-            'email' => 'required|email|unique:' . Contract::class . ',email',
+            'email' => 'nullable|email|unique:' . Contract::class . ',email',
             'document_type' => 'nullable|integer|in:' . collect(EntityDocumentType::cases())->pluck('value')->join(','),
             'document_value' => 'nullable|required_with:document_type|min:5',
         ]);
