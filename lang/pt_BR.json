@@ -214,5 +214,11 @@
     "Total of customers": "Total de usuários",
     "Users": "Usuários",
     "users": "usuários",
+    "Welcome :name": "Bem vindo(a) :name",
+    "Welcome, :name": "Bem vindo(a), :name",
+    "You can open tickets using the email": "Você pode abrir tickets usando o e-mail",
+    "Login on Help Desk": "Login no Help Desk",
+    "Thanks": "Obrigado",
+    "Thanks, :team team": "Obrigado, time :team",
     "to": "até"
 }
